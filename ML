@@ -1,0 +1,48 @@
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+# Step 1: Load the Data
+# Replace 'your_dataset.csv' with the path to your dataset
+data = pd.read_csv('your_dataset.csv')
+# Inspect the data
+print(data.head())
+print(data.info())
+# Step 2: Data Preprocessing
+# Separate features and labels
+X = data.drop(columns=['diagnosis'])  # assuming 'diagnosis' is the target column
+y = data['diagnosis']
+# Handle categorical variables (e.g., symptoms) if necessary
+X = pd.get_dummies(X, drop_first=True)  # One-hot encoding for categorical data
+# Split the dataset into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+# Standardize the data
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+# Step 3: Build and Train the Model
+# Using Logistic Regression
+logistic_model = LogisticRegression()
+logistic_model.fit(X_train, y_train)
+# Using Random Forest Classifier
+rf_model = RandomForestClassifier(n_estimators=100, random_state=42)
+rf_model.fit(X_train, y_train)
+# Step 4: Make Predictions
+# Predictions with Logistic Regression
+logistic_predictions = logistic_model.predict(X_test)
+# Predictions with Random Forest
+rf_predictions = rf_model.predict(X_test)
+# Step 5: Evaluate the Model
+# Evaluation for Logistic Regression
+print("Logistic Regression Results:")
+print("Accuracy:", accuracy_score(y_test, logistic_predictions))
+print("Classification Report:\n", classification_report(y_test, logistic_predictions))
+print("Confusion Matrix:\n", confusion_matrix(y_test, logistic_predictions))
+
+# Evaluation for Random Forest
+print("\nRandom Forest Results:")
+print("Accuracy:", accuracy_score(y_test, rf_predictions))
+print("Classification Report:\n", classification_report(y_test, rf_predictions))
+print("Confusion Matrix:\n", confusion_matrix(y_test, rf_predictions))
